@@ -1,0 +1,19 @@
+RTSP Stream Handling with gortsplib:
+
+gortsplib is used to connect to the RTSP stream, but in this case, FFmpeg will handle the actual video decoding and transcoding to HLS.
+FFmpeg Transcoding:
+
+FFmpeg is used to take the RTSP stream, transcode the H.265 video to H.264 (since most browsers don’t support H.265 directly), and encode the audio to AAC format.
+It segments the stream into .ts files (video segments) and creates an .m3u8 playlist file.
+The HLS segments and playlist are stored in the ./hls directory.
+Serving the HLS Stream:
+
+The Go HTTP server serves the generated HLS playlist (index.m3u8) and video segments (.ts files) to clients via the /hls/ URL path.
+Configuring FFmpeg:
+
+-c:v libx264: This specifies that the video should be encoded to H.264 for compatibility with most browsers.
+-c:a aac: This encodes audio to AAC.
+-f hls: This sets the output format to HLS.
+-hls_time 4: This specifies the duration of each segment (in seconds).
+-hls_list_size 10: This limits the number of segments in the playlist to the last 10.
+-hls_segment_filename: Specifies the file pattern for the .ts segment files.
